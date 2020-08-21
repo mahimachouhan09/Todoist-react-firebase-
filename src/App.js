@@ -1,58 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, { Component } from 'react'
 import './App.css';
+import { Button, FormControl ,InputLabel,Input } from '@material-ui/core';
+import Todo from './components/Todo'
+import db from './firebase'
+import firebase from 'firebase'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(){
+    super();
+    this.state =({
+      name :'Mahima',
+      todos : [],
+      input :''
+    });
+  }
+
+componentDidMount() {  
+  db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot=>{   
+  this.setState({ todos:snapshot.docs.map(doc=>({id:doc.id ,todo:doc.data().todo}))   
+  })   }    
+  )
 }
 
-export default App;
+handleChange = (e) => {
+  this.setState({ input :e.target.value })
+}
+addTodo = (e) => {
+  e.preventDefault();
+  db.collection('todos').add({    
+    todo :this.state.input,
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  })
+
+  this.setState({
+    todos :[...this.state.todos,this.state.input],
+    input :''
+  })
+}
+
+  render() {
+    return (
+      <div>
+        <h1>Todoist App of {this.state.name}</h1>
+        <form>
+          <FormControl>
+            <InputLabel>INPUT TODO'S</InputLabel>
+            <Input type = 'text'  value = { this.state.input } onChange = {this.handleChange} />
+          </FormControl>
+
+        <Button disabled={!this.state.input} type = 'button' onClick ={ this.addTodo } variant="contained" color="primary">
+          Add Task
+        </Button>
+
+        <ul>
+          {this.state.todos.map((todo, key)=>  
+            <Todo key={key} todo = {todo}/>
+          )
+          }
+        </ul>
+        </form>      
+      </div>
+    )
+  }
+}
+
+export default App
