@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import { List, ListItem,ListItemText ,Avatar,ListItemAvatar,Input, Modal} from '@material-ui/core';
+import { List, ListItem,ListItemText ,Avatar,Input, Modal} from '@material-ui/core';
 import db from '../firebase'
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -38,9 +38,9 @@ class Todo extends Component {
          
         <div className ='w3-modal-content w3-animate-bottom'>
           <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"></link>
-          <header class="w3-container w3-teal"> 
-            <span onclick="document.getElementById('id01').style.display='none'" 
-            class="w3-button w3-display-topright">&times;</span>
+          <header className="w3-container w3-teal"> 
+            <span onClick = {this.handleClose} 
+            className="w3-button w3-display-topright">&times;</span>
             <h2>Edit Task</h2>
           </header>
           
@@ -52,7 +52,7 @@ class Todo extends Component {
 
         <List>
           <ListItem>
-            <ListItemAvatar>  <Avatar></Avatar></ListItemAvatar>
+              <Avatar/>
             <ListItemText primary = {this.props.todo.todo} secondary= 'deadline'></ListItemText>
           </ListItem>
           <EditIcon onClick = {this.handleOpen}>Edit</EditIcon>
